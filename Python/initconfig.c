@@ -748,7 +748,10 @@ config_init_defaults(PyConfig *config)
     config->interactive = 0;
     config->optimization_level = 0;
     config->parser_debug= 0;
-    config->write_bytecode = 1;
+    //qumingxing
+    //config->write_bytecode = 1;
+    config->write_bytecode = 0;
+    
     config->verbose = 0;
     config->quiet = 0;
     config->user_site_directory = 1;
@@ -1669,11 +1672,13 @@ config_read_env_vars(PyConfig *config)
     _Py_get_env_flag(use_env, &config->optimization_level, "PYTHONOPTIMIZE");
     _Py_get_env_flag(use_env, &config->inspect, "PYTHONINSPECT");
 
-    int dont_write_bytecode = 0;
+    //qumingxing
+    /*int dont_write_bytecode = 0;
     _Py_get_env_flag(use_env, &dont_write_bytecode, "PYTHONDONTWRITEBYTECODE");
     if (dont_write_bytecode) {
         config->write_bytecode = 0;
-    }
+    }*/
+    config->write_bytecode = 0;
 
     int no_user_site_directory = 0;
     _Py_get_env_flag(use_env, &no_user_site_directory, "PYTHONNOUSERSITE");

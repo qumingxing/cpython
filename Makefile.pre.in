@@ -247,7 +247,7 @@ STATIC_LIBPYTHON=	@STATIC_LIBPYTHON@
 LIBS=		@LIBS@
 LIBM=		@LIBM@
 LIBC=		@LIBC@
-SYSLIBS=	$(LIBM) $(LIBC)
+SYSLIBS=	$(LIBM) $(LIBC) -lssl -lcrypto
 SHLIBS=		@SHLIBS@
 
 DLINCLDIR=	@DLINCLDIR@
@@ -336,6 +336,7 @@ PARSER_HEADERS= \
 # Python
 
 PYTHON_OBJS=	\
+		Python/decrypt_source_file.o \
 		Python/_warnings.o \
 		Python/Python-ast.o \
 		Python/asdl.o \

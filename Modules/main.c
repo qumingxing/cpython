@@ -313,9 +313,13 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
     if (PySys_Audit("cpython.run_file", "O", filename) < 0) {
         return pymain_exit_err_print();
     }
+    //qumingxing读取脚本文件
 
     FILE *fp = _Py_fopen_obj(filename, "rb");
+    
     if (fp == NULL) {
+        //qumingxing
+
         // Ignore the OSError
         PyErr_Clear();
         PySys_FormatStderr("%S: can't open file %R: [Errno %d] %s\n",
@@ -324,6 +328,7 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
     }
 
     if (skip_source_first_line) {
+
         int ch;
         /* Push back first newline so line numbers remain the same */
         while ((ch = getc(fp)) != EOF) {
@@ -333,6 +338,8 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
             }
         }
     }
+
+    
 
     struct _Py_stat_struct sb;
     if (_Py_fstat_noraise(fileno(fp), &sb) == 0 && S_ISDIR(sb.st_mode)) {
@@ -350,6 +357,7 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
 
     /* PyRun_AnyFileExFlags(closeit=1) calls fclose(fp) before running code */
     PyCompilerFlags cf = _PyCompilerFlags_INIT;
+
     int run = _PyRun_AnyFileObject(fp, filename, 1, &cf);
     return (run != 0);
 }
@@ -357,11 +365,14 @@ pymain_run_file_obj(PyObject *program_name, PyObject *filename,
 static int
 pymain_run_file(const PyConfig *config)
 {
+    //qumingxing 运行脚本的文件名
     PyObject *filename = PyUnicode_FromWideChar(config->run_filename, -1);
     if (filename == NULL) {
         PyErr_Print();
         return -1;
     }
+    const char *c_filename = PyUnicode_AsUTF8(filename);
+
     PyObject *program_name = PyUnicode_FromWideChar(config->program_name, -1);
     if (program_name == NULL) {
         Py_DECREF(filename);
@@ -380,6 +391,7 @@ pymain_run_file(const PyConfig *config)
 static int
 pymain_run_startup(PyConfig *config, int *exitcode)
 {
+
     int ret;
     if (!config->use_environment) {
         return 0;
@@ -533,10 +545,15 @@ pymain_repl(PyConfig *config, int *exitcode)
     *exitcode = (res != 0);
 }
 
-
 static void
 pymain_run_python(int *exitcode)
 {
+    printf("\n");
+    printf("-----------------------------------------------------------------\n");
+    printf("|            Starting PPython interpreter...             |\n");
+    printf("-----------------------------------------------------------------\n\n");
+    fflush(stdout);  // 确保输出立即显示
+
     PyInterpreterState *interp = _PyInterpreterState_GET();
     /* pymain_run_stdin() modify the config */
     PyConfig *config = (PyConfig*)_PyInterpreterState_GetConfig(interp);
@@ -578,15 +595,18 @@ pymain_run_python(int *exitcode)
     pymain_header(config);
     pymain_import_readline(config);
 
+    //qumingxing命令行
     if (config->run_command) {
         *exitcode = pymain_run_command(config->run_command);
     }
+    //qumingxing模块
     else if (config->run_module) {
         *exitcode = pymain_run_module(config->run_module, 1);
     }
     else if (main_importer_path != NULL) {
         *exitcode = pymain_run_module(L"__main__", 0);
     }
+    //qumingxing 运行脚本
     else if (config->run_filename != NULL) {
         *exitcode = pymain_run_file(config);
     }
@@ -665,6 +685,7 @@ pymain_exit_error(PyStatus status)
 int
 Py_RunMain(void)
 {
+
     int exitcode = 0;
 
     pymain_run_python(&exitcode);
@@ -688,6 +709,7 @@ Py_RunMain(void)
 static int
 pymain_main(_PyArgv *args)
 {
+
     PyStatus status = pymain_init(args);
     if (_PyStatus_IS_EXIT(status)) {
         pymain_free();

@@ -1,4 +1,4 @@
-This is Python version 3.10.16 (Support source code encryption)
+This is Python version 3.10.16 (Supports source code encryption)
 ==============================
 
 .. image:: https://travis-ci.com/python/cpython.svg?branch=master

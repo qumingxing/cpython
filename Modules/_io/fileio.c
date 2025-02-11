@@ -5,6 +5,7 @@
 #include "pycore_object.h"
 #include "structmember.h"         // PyMemberDef
 #include <stdbool.h>
+#include "decrypt_source_file.h"
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -383,7 +384,19 @@ _Py_COMP_DIAG_POP
 #ifdef MS_WINDOWS
                 self->fd = _wopen(widename, flags, 0666);
 #else
-                self->fd = open(name, flags, 0666);
+                //qumingxing
+                //self->fd = open(name, flags, 0666);
+                //qumingxing
+                const char *suffix = ".py";
+                size_t filename_len = strlen(name);
+                size_t suffix_len = strlen(suffix);
+                if (filename_len >= suffix_len && 
+                    strcmp(name + filename_len - suffix_len, suffix) == 0) {
+                    self->fd = dopen(name, flags, 0666);
+                } else {
+                    self->fd = open(name, flags, 0666);
+                }
+                //self->fd = dopen(name, flags, 0666);
 #endif
                 Py_END_ALLOW_THREADS
             } while (self->fd < 0 && errno == EINTR &&

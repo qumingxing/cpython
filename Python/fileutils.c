@@ -3,6 +3,7 @@
 #include "pycore_runtime.h"       // _PyRuntime
 #include "osdefs.h"               // SEP
 #include <locale.h>
+#include "decrypt_source_file.h"
 
 #ifdef MS_WINDOWS
 #  include <malloc.h>
@@ -1591,7 +1592,9 @@ _Py_wfopen(const wchar_t *path, const wchar_t *mode)
     if (cpath == NULL) {
         return NULL;
     }
-    f = fopen(cpath, cmode);
+    //qumingxing
+    //f = fopen(cpath, cmode);
+    f = d_open(cpath,cmode);
     PyMem_RawFree(cpath);
 #else
     f = _wfopen(path, mode);
@@ -1639,6 +1642,7 @@ _Py_fopen_obj(PyObject *path, const char *mode)
                      Py_TYPE(path));
         return NULL;
     }
+
 #if USE_UNICODE_WCHAR_CACHE
     const wchar_t *wpath = _PyUnicode_AsUnicode(path);
 #else /* USE_UNICODE_WCHAR_CACHE */
@@ -1656,8 +1660,8 @@ _Py_fopen_obj(PyObject *path, const char *mode)
 #endif /* USE_UNICODE_WCHAR_CACHE */
         return NULL;
     }
-
     do {
+
         Py_BEGIN_ALLOW_THREADS
         f = _wfopen(wpath, wmode);
         Py_END_ALLOW_THREADS
@@ -1683,7 +1687,8 @@ _Py_fopen_obj(PyObject *path, const char *mode)
 
     do {
         Py_BEGIN_ALLOW_THREADS
-        f = fopen(path_bytes, mode);
+        //f = fopen(path_bytes, mode);
+        f = d_open(path_bytes,mode);
         Py_END_ALLOW_THREADS
     } while (f == NULL
              && errno == EINTR && !(async_err = PyErr_CheckSignals()));
