@@ -550,7 +550,7 @@ pymain_run_python(int *exitcode)
 {
     printf("\n");
     printf("-----------------------------------------------------------------\n");
-    printf("|            Starting PPython interpreter...             |\n");
+    printf("|            Welcome to PPython interpreter...           |\n");
     printf("-----------------------------------------------------------------\n\n");
     fflush(stdout);  // 确保输出立即显示
 
